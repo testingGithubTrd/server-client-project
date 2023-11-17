@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <button class="button">click me</button>
+  <p id="likes">0</p>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.min.js"
+  integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+
+<script>
+  const socket = io("http://127.0.0.1:3000");
+  socket.on("connect", () => {
+    console.log("connected");
+  });
+
+  const btn = document.querySelector(".button");
+  const likes = document.getElementById("likes");
+  // Function to get the value of a parameter from the URL
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+  // Example usage to get the sessionID
+  const sessionIDFromUrl = getParameterByName('sessionID');
+  console.log("sessionIDFromUrl", sessionIDFromUrl);
+
+  btn.addEventListener("click", () => {
+    socket.emit("liked", sessionIDFromUrl);
+  });
+
+  socket.on("likeupdate", (count, sessionIdFromServer) => {
+    const sessionIdFromLocalStorage = localStorage.getItem('sessionID');
+    console.log("sessionIdFromLocalStorage ", sessionIdFromLocalStorage);
+
+    console.log("sessionIdFromServer", sessionIdFromServer);
+
+    if (sessionIdFromServer === sessionIdFromLocalStorage) {
+      likes.textContent = count;
+    }
+
+
+  });
+</script>
+
+</html>

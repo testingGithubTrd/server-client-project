@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate QR Code</title>
+</head>
+
+<body>
+    <h1>Scan this QR Code</h1>
+    <div id="qrcode"></div>
+
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script>
+        // Function to generate a session ID using the current timestamp in milliseconds
+        function generateSessionID() {
+            return new Date().getTime().toString();
+        }
+
+        // Retrieve the session ID from localStorage or generate a new one
+        var sessionID;
+
+        sessionID = generateSessionID();
+        console.log("generated session id", sessionID);
+        localStorage.setItem('sessionID', sessionID);
+
+
+        // Create a QR Code with the index page URL and session ID
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: 'http://127.0.0.1:5500/client/index.html?sessionID=' + sessionID,
+            width: 128,
+            height: 128
+        });
+    </script>
+</body>
+
+</html>
